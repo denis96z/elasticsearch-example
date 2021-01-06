@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+evt="$1"
+if [[ -z "${evt}" ]]; then
+    exit 1
+fi
+
+num_events="$2"
+if [[ -z "${num_events}" ]]; then
+    num_events="1000"
+fi
+
+es_addr="127.0.0.1:9200"
+curl -XGET "http://${es_addr}/event/_search?size=${num_events}" -v \
+        --header "Content-Type: application/json" --data "{\"query\":{\"match\":{\"event\":\"${evt}\"}}}"

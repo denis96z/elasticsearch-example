@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+user_id="$1"
+if [[ -z "${user_id}" ]]; then
+    exit 1
+fi
+
+num_events="$2"
+if [[ -z "${num_events}" ]]; then
+    num_events="20"
+fi
+
+es_addr="127.0.0.1:9200"
+curl -XGET "http://${es_addr}/event/_search?size=${num_events}" -v \
+        --header "Content-Type: application/json" --data "{\"query\":{\"match\":{\"user_id\":${user_id}}}}"
