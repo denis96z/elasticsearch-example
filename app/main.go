@@ -73,6 +73,7 @@ func main() {
 			_ = res.Body.Close()
 		}()
 
+		var evtID string
 		if res.IsError() {
 			log.Printf("[%s] Error indexing document", res.Status())
 
@@ -86,11 +87,24 @@ func main() {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			} else {
+				var ok bool
+
+				evtID, ok = r["_id"].(string)
+				if !ok {
+					log.Printf("Error parsing document _id: %v", r["_id"])
+
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+
 				log.Printf("OK: %v", r)
 			}
 		}
 
 		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(fmt.Sprintf(
+			`{"event_id":%q}`, evtID,
+		)))
 	})
 
 	_ = http.ListenAndServe(":" + bindPort, nil)

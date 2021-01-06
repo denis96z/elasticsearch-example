@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+app_addr="127.0.0.1:8080"
+for (( i = 1; i <= 1000; i++ )) ; do
+    for (( j = 1; j <= 10; ++j )) ; do
+        curl "http://${app_addr}/event?user_id=${i}&event=${j}"
+        echo " OK: user_id=${i} event=${j}"
+    done
+done
